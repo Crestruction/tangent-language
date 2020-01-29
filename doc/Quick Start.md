@@ -12,12 +12,12 @@ Tangent语言脚本文件的标准扩展名为.tt。您编写的Tangent Script�
 Tangent语句采用yaml的格式，即键值对形式：“键：值”。
 键是本条语句的指令，值是本条指a令的具体内容。综上，Tangent的关键词（指令）映射表除去保留关键词（见6）外，均由宿主语言所决定。例如：
 ```
-	move: 10,0,10
-	action: fight
+move: 10,0,10
+action: fight
 ```
 #### 3. 类
 Tangent规定，一个文件中只允许定义一个类，类名与文件名无关，但必须定义在tt脚本开头的位置。类名在跨文件访问函数式是必要的。Tangent语言的类名可以接受命名中除了“.”（圆点）、“:”（冒号）、“$”（美元符号）以外任意utf-8字符，但是仍然建议不要使用空格并且采用英文命名。例如：
-```properties
+```yaml
 #文件：example01.tt
 Script_01:
 	$log_string:
@@ -32,7 +32,7 @@ Script_02:
 ```
 #### 4. 函数
 函数是Tangent语言最基本的组成元素，函数的声明方式为“美元符号+函数名”，例如$function，Tangent语言的函数名可以接受命名中除了“.”（圆点）、“:”（冒号）、“$”（美元符号）以外任意utf-8字符，但是仍然建议不要使用空格并且采用英文命名。$main函数是一个Tangent脚本的入口点，然而当脚本作为被include的对象，主函数不会执行。例如：
-```properties·
+```yaml
 Script_03:
 	$main:
 		log:Hello World
@@ -54,58 +54,58 @@ call
 
 #### 7. 注释
 注释单独成行，以#开头，例如：
-```
-	#一条指令
-	run: 123
+```yaml
+#一条指令
+run: 123
 ```
 ### 三. 基础教程
 #### 1. 接入关键词（程序组） 
 TangentEnv是Tangent语言运行时的环境单例，您可以在此定义需要的关键词映射表。TangetKeywords是关键词集合类，您需要自己实例化本类，定义列表并将其设置为环境下的映射表。例如:
 ```c#
-	var keywords = new TangentKeywords(
-		("log", obj =>
-		{
-		    Debug.log($"Log: {obj.Value}");
-		    obj.Finish();
-		}));
-	
-	TangentEnv.SetKeywords(keywords);
+var keywords = new TangentKeywords(
+	("log", obj =>
+	{
+	    Debug.log($"Log: {obj.Value}");
+	    obj.Finish();
+	}));
+
+TangentEnv.SetKeywords(keywords);
 ```
 Tangent映射表由一对键值组成，上述代码定义了1个用户指令“log”，这个指令为键，即关键词名，值为相应的执行函数（TangentAction）。
 ```c#
-    public delegate void TangentAction(TangentEventArg arg);
+public delegate void TangentAction(TangentEventArg arg);
 ```
 TangentEventArgs是委托传入的函数，他的类构成如下：
 ```c#
-	public class TangentEventArg
-	{
-	    public string Key { get; }
-	    public string Value { get; }
-	    public Dictionary<string, string> ArgPairs { get; }
-	    
-	    public void Finish();
-	}
+public class TangentEventArg
+{
+    public string Key { get; }
+    public string Value { get; }
+    public Dictionary<string, string> ArgPairs { get; }
+
+    public void Finish();
+}
 ```
 ##### 1）变量  
 1. **Key**：字符串类型，Key是当前指令的名称，在例2-2中，“move”为指令名。  
 2. **Value**：字符串类型，Value是Tangent语言中所设置的值，在例2-2中，“10,0,10”为值。  
 3. **ArgPairs**：字符串字典表，若当前指令值含有子键值对，这些子键值对会被存储到此处。例如：
-```
-	dosomething: move
-		direction: up
-		speed: 3
-		delay: 1
+```yaml
+dosomething: move
+	direction: up
+	speed: 3
+	delay: 1
 ```
 以上例子中，direction、speed和delay就会被存储在此。  
 ##### 2）函数
 1. **Finish()**：委托必须在每次行为执行结束后执行次方法，来告诉Tangent本指令已经执行完毕，该执行下一句了。
 
-####2. 接入委托（程序组） 
+#### 2. 接入委托（程序组） 
 TangentEnv中包含以下委托函数，需要用户进行定义
 ```c#
-    public static Func<string, string> OnLoadScript;
-    public static Func<string, object> OnEvalCond;
-    public static Action<string, TangentScript> OnEvalScript;
+public static Func<string, string> OnLoadScript;
+public static Func<string, object> OnEvalCond;
+public static Action<string, TangentScript> OnEvalScript;
 ```
 1. **OnLoadScript**是脚本加载和include时的路径寻找逻辑，传入路径，函数应当返回脚本的文本内容。  
 2. **OnEvalCond**是cond指令执行条件判断语句（通常是Lua语句）的委托，传入条件语句，函数应当返回一个bool值代表判断结果。  
