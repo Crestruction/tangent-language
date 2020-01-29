@@ -1,0 +1,9 @@
+included_file:
+    $main:
+        include: example2.tt
+        log: example1 start
+    $func:
+        log: call example1.tt from other script
+        eval: LPrint(tostring(x))
+        eval: x = 10
+        call: included_file_2.$func

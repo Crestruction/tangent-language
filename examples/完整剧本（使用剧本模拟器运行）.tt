@@ -1,0 +1,98 @@
+example:
+    $main: 
+        background: suzunaan_fire_1.png
+        character:
+            id: 0
+            path: reimu.png
+        conv:
+            name: 博丽灵梦
+            content: 这间房子怎么又着火了！已经是这个月第10次了，希望不会有人被困在里面吧。
+        character:
+            id: 0
+            path: kosuzu_1.png
+        conv:
+            name: 本居小铃
+            content: 怎么又着火了呀，这下完了，我得先快点逃出去找人来救火！
+        conv:
+            name: 本居小铃
+            content: 怎么这间屋子里也都是火！得换一条路！
+        character:
+            id: 0
+            path: kosuzu_2.png
+        conv:
+            name: 本居小铃
+            content: 呜呜呜~终于逃出来了！
+        character:
+            id: 1
+            path: reimu.png
+        conv:
+            name: 博丽灵梦
+            content: 小铃你没事吧，赶紧找人来灭火吧！
+
+        eval:  solve = 0
+
+        while:
+            cond: solve == 0
+            prog:
+                branches:
+                    arg: choice
+                    sunny: 桑尼米尔克刚好路过，试着问下她能否帮忙灭火。
+                    cirno: 琪露诺应该是个不错的消防员吧！
+                    reimu: 问问灵梦能不能让她帮上忙。
+                    kosuzu: 自力更生吧！
+                switch:
+                    case:
+                        cond: choice == "sunny"
+                        prog:
+                            character:
+                                id: 1
+                                path: sunny.png
+                            conv:
+                                name: 桑尼.米尔克
+                                content: 我没有灭火的办法呢，你去找找别人吧。
+                    case:
+                        cond: choice == "reimu"
+                        prog:
+                            character:
+                                id: 1
+                                path: reimu.png
+                            conv:
+                                name: 博丽灵梦
+                                content: 这不是一般的火，有妖怪的气息在里面，普通的水是灭不了的，你最好想想有没有其他适合的人选。
+                    case:
+                        cond: choice == "cirno"
+                        prog:
+                            eval: solve = 1
+                            character:
+                                id: 1
+                                path: cirno.png
+                            conv:
+                                name: 琪露诺
+                                content: 就让全幻想乡最强的咱来给你灭火吧！
+                            background: suzunaan_fire_3.png
+
+                            conv:
+                                name: 琪露诺
+                                content: 火已经灭了哟~
+                    default:
+                        prog:
+                            eval: solve = -1
+                            conv:
+                                name: 博丽灵梦
+                                content: 火怎么越来越大了，已经来不及了，快撤吧。。。
+        
+        character:
+            id: 1
+            path: nil
+
+        if:
+            cond: solve == 1
+            true:
+                background: suzunaan_standard.png
+                conv:
+                    name: 本居小铃
+                    content: 真是惊险呢！
+            false:
+                conv:
+                    name: 本居小铃
+                    content: awsl！！！

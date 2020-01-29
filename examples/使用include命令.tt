@@ -1,0 +1,8 @@
+include_test:
+    $main:
+        include: example1.tt
+        eval: x = nil
+        eval: LPrint(tostring(x))
+        eval: x = 3
+        call: included_file.$func
+        log: end

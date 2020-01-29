@@ -1,0 +1,6 @@
+test2:
+    $main:
+        action: Do action
+        avatar: Switch avatar
+        log: log something
+    

@@ -1,0 +1,25 @@
+test:
+    $main:
+        if:
+            cond: 1+1 > 2
+            true: 
+                call: $onTrue
+            false:
+                call: $onFalse
+        switch:
+            case:
+                cond: 1+1 == 2
+                prog: 
+                    log: 999!
+            case:
+                cond: 1+1 == 9
+                prog:
+                    log: 99999!
+            default:
+                prog:
+                    log: Correct!
+
+    $onTrue:
+        log: 1+1 < 2
+    $onFalse:
+        log: 9!
