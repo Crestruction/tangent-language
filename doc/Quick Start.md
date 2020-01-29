@@ -17,7 +17,7 @@ action: fight
 ```
 #### 3. 类
 Tangent规定，一个文件中只允许定义一个类，类名与文件名无关，但必须定义在tt脚本开头的位置。类名在跨文件访问函数式是必要的。Tangent语言的类名可以接受命名中除了“.”（圆点）、“:”（冒号）、“$”（美元符号）以外任意utf-8字符，但是仍然建议不要使用空格并且采用英文命名。例如：
-```yaml
+```
 #文件：example01.tt
 Script_01:
 	$log_string:
@@ -32,7 +32,7 @@ Script_02:
 ```
 #### 4. 函数
 函数是Tangent语言最基本的组成元素，函数的声明方式为“美元符号+函数名”，例如$function，Tangent语言的函数名可以接受命名中除了“.”（圆点）、“:”（冒号）、“$”（美元符号）以外任意utf-8字符，但是仍然建议不要使用空格并且采用英文命名。$main函数是一个Tangent脚本的入口点，然而当脚本作为被include的对象，主函数不会执行。例如：
-```yaml
+```
 Script_03:
 	$main:
 		log:Hello World
@@ -54,7 +54,7 @@ call
 
 #### 7. 注释
 注释单独成行，以#开头，例如：
-```yaml
+```
 #一条指令
 run: 123
 ```
@@ -90,7 +90,7 @@ public class TangentEventArg
 1. **Key**：字符串类型，Key是当前指令的名称，在例2-2中，“move”为指令名。  
 2. **Value**：字符串类型，Value是Tangent语言中所设置的值，在例2-2中，“10,0,10”为值。  
 3. **ArgPairs**：字符串字典表，若当前指令值含有子键值对，这些子键值对会被存储到此处。例如：
-```yaml
+```
 dosomething: move
 	direction: up
 	speed: 3
@@ -193,7 +193,7 @@ Hello World！
 ```
 
 ##### 3. 使用自定义指令  
-```properties
+```
 test: 
   $main:
     action: 镜头移动到灵梦
@@ -206,7 +206,7 @@ test:
 ```
 ##### 4. 调用函数  
 函数调用采用call指令，值为函数名
-```properties
+```
 test: 
   $main:
     call: $func_reimu
@@ -226,7 +226,7 @@ test:
 
 ##### 5. 选择结构（if）  
 一个是非判断的语言结构，当cond指令为true时执行true块，反之执行false块
-```properties
+```
 test:
     $main:
         if:
@@ -243,7 +243,7 @@ test:
 
 ##### 6. 选择结构（switch-case)  
 这里的Switch与C Like语言的结构不同，这里更多的是提供一个多条件的匹配，也就是简化一个if嵌套的写法，而非只能针对一个算式的选择（像例子中这样是针对一个计算来选择）。当有case的cond为真时，case中的prog块执行，然后跳出switch。如果没有条件成立，执行default块。default块可以省略，如果没有default块且全部条件均不为真，则switch-case不执行，直接被跳过。
-```properties
+```
 test:
     $main:
         switch:
@@ -262,7 +262,7 @@ test:
 
 ##### 7. 循环结构（while）
 循环结构必须包含一个条件语句（cond节点），每次循环开始时判断cond是否成立，如果cond成立则执行循环，反之结束循环，循环指令块为prog节点。
-```properties
+```
 test: 
   $main:
   	eval: i = 0
@@ -275,7 +275,7 @@ test:
 ```
 
 ##### 8. 调用C#接口（通过Lua）
-```properties
+```
 test: 
   $main:
     eval: LPrint("Print from Tangent Script")
@@ -283,7 +283,7 @@ test:
 
 ##### 9. Include包含指令
 Tangent建议将Include指令写在main函数最前端，同时无论Include写在何处，都会在解析时即时生效，不会出现执行到Include指令时才去解析包含文件的情况。两个文件互相访问是示例。必须注意的是，当脚本作为被include的对象，主函数不会被执行。
-```properties
+```
 
 #文件名：Script_03.tt
 include_test:
