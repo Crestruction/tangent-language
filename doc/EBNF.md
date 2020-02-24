@@ -1,10 +1,9 @@
 ```EBNF
-newline ::= '\r' ? '\n';    
 comment ::= '#' string newline;    
-tab ::= '\t' | "    ";
+tab ::= "\t" | "    ";
 
 document ::= statment+;
-statment ::= (key ':' value newline) (childStatment)? | childStatment;    
+statment ::= (key ":" value newline childStatment?) | childStatment;    
 childStatment ::= newline (tab statment newline)*;         
 
 key ::= keyword | functionName | className;    
