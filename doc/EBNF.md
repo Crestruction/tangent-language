@@ -1,17 +1,20 @@
+### basics
 ```EBNF
-comment ::= '#' string newline;    
-tab ::= "\t" | "    ";
-
-document ::= statment+;
-statment ::= (key ":" value newline childStatment?) | childStatment;    
-childStatment ::= newline (tab statment newline)*;         
-
-key ::= keyword | functionName | className;    
-value ::= string | luaExpression;    
-
+anyChar := K'^((?!/\*|\*/|\n)[\s\S])*$'
+tab ::= '\t' | '    ';
+newline ::= '\r\n' | '\r' | '\n';
 name ::= (anyChar -('.'|':'|'$'))+;   
-functionName ::= '$' name;   
-className ::= name;   
+string ::= (anyChar - newline)+;   
+```
+
+### comments
+
+```EBNF
+comment ::= '#' string newline;  
+```
+
+### keywords
+```EBNF
 keyword ::=    
     userCustumKeyword |   
     "call" |   
@@ -25,6 +28,29 @@ keyword ::=
     "prog" |   
     "while" |   
     "eval";   
-string ::= (anyChar - newline)+;   
+```
+
+### statements
+
+```EBNF
+functionName ::= '$' name;   
+className ::= name;   
+
+key ::= keyword | functionName | className;    
+value ::= string | luaExpression;  
+
+
+statment ::= 
+    (key ":" value newline childStatment) |     
+    (key ":" value newline) |    
+    childStatment;     
+childStatment ::= newline (tab statment newline)*;         
+
+document ::= statment+;    
+
+
+
+
+ 
     
 ```
