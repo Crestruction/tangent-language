@@ -1,5 +1,5 @@
 ```EBNF
-newline ::= '\r'?'\n';    
+newline ::= '\r' ? '\n';    
 comment ::= '#' string newline;    
 tab ::= '\t' | "    ";
 
