@@ -3,6 +3,7 @@ newline ::= '\r'?'\n';
 comment ::= '#' string newline;    
 tab ::= '\t' | "    ";
 
+document ::= statment+;
 statment ::= (key ':' value newline) (childStatment)? | childStatment;    
 childStatment ::= newline (tab statment newline)*;         
 
