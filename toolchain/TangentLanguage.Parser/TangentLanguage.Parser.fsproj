@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Preprocessor.fs" />
+    <Compile Include="Basic.fs" />
+    <Compile Include="Keywords.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OurParserC" Version="2.0.1" />
+  </ItemGroup>
+
+</Project>

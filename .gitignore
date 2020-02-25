@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/toolchain/.vs/tangent-language-toolchain
+/.vs
+/toolchain/TangentLanguage.Parser/obj
+/toolchain/TangentLanguage.Parser/bin
+/toolchain/TangentLanguage.Parser.Test/obj
+/toolchain/TangentLanguage.Parser.Test/bin
