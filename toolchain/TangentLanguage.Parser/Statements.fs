@@ -20,8 +20,9 @@ let value = Basic.string
 
 exception TabError of int
 let tabSpace currentSpaceNumbers = 
-    pred (zeroOrMore (Parsers.character ' ' <|> Parsers.character '\t')) (fun l -> (List.length l) >= currentSpaceNumbers)
-    >> Parsed.map List.length
+    let ch = Parsers.character ' ' <|> Parsers.character '\t' >> Parsed.map (function | '\t' -> 4 | ' ' -> 1 | _ -> 0)
+    pred (zeroOrMore ch) (fun l -> (List.sum l) >= currentSpaceNumbers)
+    >> Parsed.map List.sum
     >> Parsed.mapError (fun _ -> TabError currentSpaceNumbers)
     
 
