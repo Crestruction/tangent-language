@@ -20,18 +20,6 @@ let anyFailedTest () =
     |> printfn "%A"
 
 [<Test>]
-let tabTest () = 
-    Input.create "    \t    "
-    |> (tab <+> tab)
-    |> printfn "%A"
-
-[<Test>]
-let tabFailedTest () = 
-    Input.create " 1   \t    "
-    |> (tab <+> tab)
-    |> printfn "%A"
-
-[<Test>]
 let newlineTest () = 
     Input.create "\n"
     |> newline

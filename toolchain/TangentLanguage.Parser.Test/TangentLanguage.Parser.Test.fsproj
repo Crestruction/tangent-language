@@ -22,6 +22,7 @@
     <Compile Include="Basic.fs" />
     <Compile Include="Preprocessor.fs" />
     <Compile Include="Keywords.fs" />
+    <Compile Include="Parsing.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

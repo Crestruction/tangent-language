@@ -9,16 +9,15 @@ let any =
     Parsers.anyChar
     >> Parsed.mapError (fun _ -> EarlyEOF)
 
-exception ErrorTab
-let tab =
-    let space = Parsers.character ' '
-    Parsers.character '\t'
-    <||||> (space <+> space <+> space <+> space)
-    >> Parsed.ignore
-    >> Parsed.mapError (fun _ -> ErrorTab)
+exception RequireWhitespace
+let whitespace0 = zeroOrMore (Parsers.character ' ') >> Parsed.ignore
+let whitespace1 = oneOrMore (Parsers.character ' ') >> Parsed.ignore >> Parsed.map (fun _ -> RequireWhitespace)
 
 
-let newline = Parsers.character '\n'
+exception RequireNewLine
+let newline = 
+    let ch = Parsers.character '\n' <|> Parsers.character '\r' <||||> Parsers.literal "\r\n"
+    zeroOrMore ch >> Parsed.ignore >> Parsed.mapError (fun _ -> RequireNewLine)
 
 exception IsNotAName
 let name = 
@@ -27,7 +26,9 @@ let name =
         >> Parsed.mapError (fun _ -> IsNotAName))
         >> Parsed.map (List.toArray >> System.String)
 
+exception IsNotAString
 let string = 
     oneOrMore (pred any ((<>) '\n')) 
     >> Parsed.map (List.toArray >> System.String)
+    >> Parsed.mapError (fun _ -> IsNotAString)
 

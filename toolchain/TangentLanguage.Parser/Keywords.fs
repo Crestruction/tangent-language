@@ -15,23 +15,26 @@ type Keyword =
 | Prog
 | While
 | Eval
+| Include
 | UserCustumKeyword of string
 
+exception IsNotAKeyword
 let keyword =
-    let (-->) x y = Parsers.literal x >> Parsed.map (fun _ -> y) 
-    [
-        "call" --> Call
-        "log" --> Log
-        "if" --> If
-        "cond" --> Cond
-        "true" --> True
-        "false" --> False
-        "switch" --> Switch
-        "case" --> Case
-        "prog" --> Prog
-        "while" --> While
-        "eval" --> Eval ]
-    |> List.reduce (<|>)
-    |> fun x -> x <|> (Basic.name >> Parsed.map UserCustumKeyword)
-
+    Basic.name
+    >> Parsed.map (function
+    | "call" -> Call
+    | "log" -> Log
+    | "if" -> If
+    | "cond" -> Cond
+    | "true" -> True
+    | "false" -> False
+    | "switch" -> Switch
+    | "case" -> Case
+    | "prog" -> Prog
+    | "while" -> While
+    | "eval" -> Eval
+    | "include" -> Include
+    | x -> UserCustumKeyword x)
+    >> Parsed.mapError (fun _ -> IsNotAKeyword)
+    
 

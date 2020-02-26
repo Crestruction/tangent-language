@@ -8,6 +8,7 @@
     <Compile Include="Preprocessor.fs" />
     <Compile Include="Basic.fs" />
     <Compile Include="Keywords.fs" />
+    <Compile Include="Statements.fs" />
   </ItemGroup>
 
   <ItemGroup>
