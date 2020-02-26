@@ -3,6 +3,10 @@
 open OurParserC
 open Parser
 
+
+
+type LineComment = string option
+
 exception EarlyEOF
 
 let any =
@@ -13,11 +17,6 @@ exception RequireWhitespace
 let whitespace0 = zeroOrMore (Parsers.character ' ') >> Parsed.ignore
 let whitespace1 = oneOrMore (Parsers.character ' ') >> Parsed.ignore >> Parsed.map (fun _ -> RequireWhitespace)
 
-
-exception RequireNewLine
-let newline = 
-    let ch = Parsers.character '\n' <|> Parsers.character '\r' <||||> Parsers.literal "\r\n"
-    zeroOrMore (whitespace0 <+> ch) >> Parsed.ignore >> Parsed.mapError (fun _ -> RequireNewLine)
 
 exception IsNotAName
 let name = 
@@ -32,3 +31,9 @@ let string =
     >> Parsed.map (List.toArray >> System.String)
     >> Parsed.mapError (fun _ -> IsNotAString)
 
+let comment : LineComment parser = zeroOrOne (whitespace0 <+@> Parsers.character '#' <+@> string)
+
+exception RequireNewLine
+let newline = 
+    let ch = Parsers.character '\n' <|> Parsers.character '\r' <||||> Parsers.literal "\r\n"
+    comment <+> zeroOrMore (whitespace0 <+@> comment <@+> ch) >> Parsed.mapError (fun _ -> RequireNewLine)

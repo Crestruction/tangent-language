@@ -9,8 +9,9 @@ type Key =
 
 type Value =
 | Value of string
-| ValueWithArgPairs of string * (Key * Value) list
-| ChildStatements of (Key * Value) list
+| ValueWithArgPairs of string * Statement list
+| ChildStatements of Statement list
+and Statement = (Key*Value) option * (Basic.LineComment * Basic.LineComment list)
 
 
 let functionName = Parsers.character '$' <+@> Basic.name >> Parsed.map FunctionName
@@ -26,19 +27,20 @@ let tabSpace currentSpaceNumbers =
     >> Parsed.mapError (fun _ -> TabError currentSpaceNumbers)
     
 
-let rec statement (tabSpaceParser:int parser) input =
+
+let rec statement (tabSpaceParser:int parser) input : Statement parsed =
     let kvp = 
-        (key <@+> Basic.whitespace0 <@+> Parsers.character ':' <@+> Basic.whitespace0 <+> value <@+> Basic.whitespace0 <@+> Basic.newline)
+        (key <@+> Basic.whitespace0 <@+> Parsers.character ':' <@+> Basic.whitespace0 <+> value <+> Basic.newline <@+> Basic.newline)
     input |> (
         let statementParser nextTabTabParser =
-            (key <@+> Basic.whitespace0 <@+> Parsers.character ':' <@+> Basic.whitespace0 <@+> Basic.newline <+> childStatements nextTabTabParser
-                >> Parsed.map (fun (k,v) -> k,ChildStatements v)) <|> 
-            (kvp <+> childStatements nextTabTabParser >> Parsed.map (fun ((k,v),c) -> k,ValueWithArgPairs(v,c))) <|>
-            (kvp >> Parsed.map (fun (a,b) -> a,Value b))
-        tabSpaceParser @-> (((+) 1) >> tabSpace >> statementParser))
+            (key <@+> Basic.whitespace0 <@+> Parsers.character ':' <+> Basic.newline <@+> Basic.newline <+> childStatements nextTabTabParser
+                >> Parsed.map (fun ((k,comment),v) -> Some(k,ChildStatements v),comment)) <|> 
+            (kvp <+> childStatements nextTabTabParser >> Parsed.map (fun (((k,v),comment),c) -> Some(k,ValueWithArgPairs(v,c)),comment)) <|>
+            (kvp >> Parsed.map (fun ((k,v),comment) -> Some(k,Value v),comment))
+        (tabSpaceParser @-> (((+) 1) >> tabSpace >> statementParser)))
         
 
-and childStatements (nextTabParser:int parser) = oneOrMore (statement nextTabParser)
+and childStatements (nextTabParser:int parser) : Statement list parser = oneOrMore (statement nextTabParser)
 
 let parse x = 
     Input.create x |> zeroOrMore (statement (tabSpace 0)) |> Parsed.raise
