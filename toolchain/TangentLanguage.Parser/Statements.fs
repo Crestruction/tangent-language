@@ -10,8 +10,7 @@ type Key =
 type Value =
 | Value of string
 | ValueWithArgPairs of string * Statement list
-| ChildStatements of Statement list
-and Statement = (Key*Value) option * (Basic.LineComment * Basic.LineComment list)
+and Statement = Key*Value
 
 
 let functionName = Parsers.character '$' <+@> Basic.name >> Parsed.map FunctionName
@@ -30,13 +29,13 @@ let tabSpace currentSpaceNumbers =
 
 let rec statement (tabSpaceParser:int parser) input : Statement parsed =
     let kvp = 
-        (key <@+> Basic.whitespace0 <@+> Parsers.character ':' <@+> Basic.whitespace0 <+> value <+> Basic.newline <@+> Basic.newline)
+        (key <@+> Basic.whitespace0 <@+> Parsers.character ':' <@+> Basic.whitespace0 <+> value <@+> Basic.newline)
     input |> (
         let statementParser nextTabTabParser =
-            (key <@+> Basic.whitespace0 <@+> Parsers.character ':' <+> Basic.newline <@+> Basic.newline <+> childStatements nextTabTabParser
-                >> Parsed.map (fun ((k,comment),v) -> Some(k,ChildStatements v),comment)) <|> 
-            (kvp <+> childStatements nextTabTabParser >> Parsed.map (fun (((k,v),comment),c) -> Some(k,ValueWithArgPairs(v,c)),comment)) <|>
-            (kvp >> Parsed.map (fun ((k,v),comment) -> Some(k,Value v),comment))
+            (key <@+> Basic.whitespace0 <@+> Parsers.character ':' <+> Basic.newline <+> childStatements nextTabTabParser
+                >> Parsed.map (fun ((k,comment),v) -> k,ValueWithArgPairs ("",v))) <|> 
+            (kvp <+> childStatements nextTabTabParser >> Parsed.map (fun ((k,v),s) -> k,ValueWithArgPairs(v,s))) <|>
+            (kvp >> Parsed.map (fun (k,v) -> k,Value v))
         (tabSpaceParser @-> (((+) 1) >> tabSpace >> statementParser)))
         
 

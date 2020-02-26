@@ -10,6 +10,9 @@ type LineComment = string option
 exception EarlyEOF
 
 let any =
+    zeroOrOne (
+        Parsers.character '#' <+> 
+        zeroOrMore (pred Parsers.anyChar (fun x -> x <> '\n' && x <> '\r'))) <+@>
     Parsers.anyChar
     >> Parsed.mapError (fun _ -> EarlyEOF)
 
@@ -31,9 +34,7 @@ let string =
     >> Parsed.map (List.toArray >> System.String)
     >> Parsed.mapError (fun _ -> IsNotAString)
 
-let comment : LineComment parser = zeroOrOne (whitespace0 <+@> Parsers.character '#' <+@> string)
-
 exception RequireNewLine
 let newline = 
     let ch = Parsers.character '\n' <|> Parsers.character '\r' <||||> Parsers.literal "\r\n"
-    comment <+> zeroOrMore (whitespace0 <+@> comment <@+> ch) >> Parsed.mapError (fun _ -> RequireNewLine)
+    zeroOrMore (whitespace0 <+> ch) >> Parsed.mapError (fun _ -> RequireNewLine) >> Parsed.ignore
