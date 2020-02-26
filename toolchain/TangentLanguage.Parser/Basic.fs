@@ -17,7 +17,7 @@ let whitespace1 = oneOrMore (Parsers.character ' ') >> Parsed.ignore >> Parsed.m
 exception RequireNewLine
 let newline = 
     let ch = Parsers.character '\n' <|> Parsers.character '\r' <||||> Parsers.literal "\r\n"
-    zeroOrMore ch >> Parsed.ignore >> Parsed.mapError (fun _ -> RequireNewLine)
+    zeroOrMore (whitespace0 <+> ch) >> Parsed.ignore >> Parsed.mapError (fun _ -> RequireNewLine)
 
 exception IsNotAName
 let name = 
